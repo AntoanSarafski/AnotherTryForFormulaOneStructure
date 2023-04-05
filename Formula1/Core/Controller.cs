@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Formula1.Core.Contracts;
 using Formula1.Models;
+using Formula1.Models.Contracts;
 using Formula1.Repositories;
 using Formula1.Utilities;
 
@@ -19,15 +20,13 @@ namespace Formula1.Core
 
         public string CreatePilot(string fullName)
         {
-            if (pilotRepository.Models.FirstOrDefault(p => p.FullName == fullName) != null)
+            if (pilotRepository.FindByName(fullName) != null)
             {
-                pilotRepository.Add(new Pilot(fullName));
-                return String.Format(OutputMessages.SuccessfullyCreatePilot, fullName);
+                throw new InvalidOperationException(String.Format(ExceptionMessages.PilotExistErrorMessage, fullName));
             }
-            else
-            {
-                return String.Format(ExceptionMessages.PilotExistErrorMessage, fullName);
-            }
+            IPilot pilot = new Pilot(fullName);
+            pilotRepository.Add(pilot);
+            return String.Format(OutputMessages.SuccessfullyCreatePilot, fullName);
         }
 
         public string CreateCar(string type, string model, int horsepower, double engineDisplacement)
