@@ -15,6 +15,10 @@ namespace Formula1.Models
         private int numberOfWins;
         private bool canRace;
 
+        public Pilot(string fullName)
+        {
+            FullName = fullName;
+        }
 
         public string FullName
         {
@@ -34,7 +38,14 @@ namespace Formula1.Models
         public IFormulaOneCar Car
         {
             get { return car; }
-            private set { car = value; }
+            private set 
+            { 
+                if (value == null) 
+                {
+                    throw new NullReferenceException(String.Format(ExceptionMessages.InvalidCarForPilot, value));
+                }
+                car = value; 
+            }
         }
 
        
@@ -57,12 +68,20 @@ namespace Formula1.Models
 
         public void AddCar(IFormulaOneCar car)
         {
-            throw new NotImplementedException();
+            Car = car;
+            CanRace = true;
         }
 
         public void WinRace()
         {
-            throw new NotImplementedException();
+            NumberOfWins++;
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"Pilot {FullName} has {NumberOfWins} wins.");
+            return sb.ToString().Trim();
         }
     }
 }
