@@ -17,19 +17,19 @@ namespace Formula1.Repositories
         private List<IPilot> models;
         public IReadOnlyCollection<IPilot> Models => this.models.AsReadOnly();
 
-        public void Add(IPilot model)
+        public void Add(IPilot pilot)
         {
-            models.Add(model);
+            models.Add(pilot);
         }
 
-        public IPilot FindByName(string name)
+        public IPilot FindByName(string fullName)
         {
-            return models.FirstOrDefault(c => c.FullName                                                                                                    == name);
+            return models.FirstOrDefault(c => c.FullName == fullName);
         }
 
-        public bool Remove(IPilot model)
+        public bool Remove(IPilot pilot)
         {
-            return models.Remove(model);
+            return models.Remove(pilot);
         }
     }
 }
