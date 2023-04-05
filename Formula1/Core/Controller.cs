@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Formula1.Core.Contracts;
@@ -55,6 +56,19 @@ namespace Formula1.Core
         }
 
 
+        public string CreateRace(string raceName, int numberOfLaps)
+        {
+            IRace race = null;
+            if (raceRepository.FindByName(raceName) != null)
+            {
+                throw new InvalidOperationException(String.Format(ExceptionMessages.RaceExistErrorMessage, raceName));
+            }
+            race = new Race(raceName, numberOfLaps);
+            raceRepository.Add(race);
+            return String.Format(OutputMessages.SuccessfullyCreateRace, raceName);
+        }
+
+
         public string AddCarToPilot(string pilotName, string carModel)
         {
             throw new NotImplementedException();
@@ -69,10 +83,7 @@ namespace Formula1.Core
 
 
 
-        public string CreateRace(string raceName, int numberOfLaps)
-        {
-            throw new NotImplementedException();
-        }
+       
 
         public string PilotReport()
         {
