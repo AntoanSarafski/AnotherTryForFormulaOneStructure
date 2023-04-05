@@ -31,22 +31,26 @@ namespace Formula1.Core
 
         public string CreateCar(string type, string model, int horsepower, double engineDisplacement)
         {
+            IFormulaOneCar car = null;
+            if (carRepository.FindByName(model) != null)
+            {
+                throw new InvalidOperationException(String.Format(ExceptionMessages.CarExistErrorMessage, model));
+            }
+            if (type == "Ferrari")
+            {
+                car = new Ferrari(model, horsepower, engineDisplacement);
+            }
+            else if (type == "Williams")
+            {
+                car = new Williams(model, horsepower, engineDisplacement);
+            }
+            else
+            {
+                throw new InvalidOperationException(String.Format(ExceptionMessages.InvalidTypeCar, type));
+            }
 
-            if (carRepository.Models.FirstOrDefault(c => c.Model == type) != null)
-            {
-                throw new InvalidOperationException(String.Format(ExceptionMessages.CarExistErrorMessage, type));
-            }
-            switch (type)
-            {
-                case "Ferrari":
-                    carRepository.Add(new Ferrari(model, horsepower, engineDisplacement));
-                    return String.Format(OutputMessages.SuccessfullyCreateCar, typeof(Ferrari).FullName, model);
-                case "Williams":
-                    carRepository.Add(new Williams(model, horsepower, engineDisplacement));
-                    return String.Format(OutputMessages.SuccessfullyCreateCar, typeof(Williams).FullName, model);
-                default:
-                    throw new InvalidOperationException(String.Format(ExceptionMessages.InvalidF1CarModel, type));
-            }
+            carRepository.Add(car);
+            return String.Format(OutputMessages.SuccessfullyCreateCar, type, model);
 
         }
 
