@@ -71,19 +71,32 @@ namespace Formula1.Core
 
         public string AddCarToPilot(string pilotName, string carModel)
         {
-            throw new NotImplementedException();
+            IPilot pilot = pilotRepository.FindByName(pilotName);
+            IFormulaOneCar car = carRepository.FindByName(carModel);
+            if (pilot == null || pilot.Car != null)
+            {
+                throw new InvalidOperationException
+                    (String.Format(ExceptionMessages.PilotDoesNotExistOrHasCarErrorMessage, pilotName));
+            }
+            if (car == null)
+            {
+                throw new NullReferenceException(String.Format(ExceptionMessages.CarDoesNotExistErrorMessage, carModel));
+            }
+            pilot.AddCar(car);
+            carRepository.Remove(car);
+            return String.Format(OutputMessages.SuccessfullyPilotToCar, pilotName, car.GetType().Name, carModel);
         }
+
+
+
+
+
 
         public string AddPilotToRace(string raceName, string pilotFullName)
         {
             throw new NotImplementedException();
         }
 
-
-
-
-
-       
 
         public string PilotReport()
         {
