@@ -94,7 +94,18 @@ namespace Formula1.Core
 
         public string AddPilotToRace(string raceName, string pilotFullName)
         {
-            throw new NotImplementedException();
+            IRace race = raceRepository.FindByName(raceName);
+            IPilot pilot = pilotRepository.FindByName(pilotFullName);
+            if (race == null)
+            {
+                throw new NullReferenceException(String.Format(ExceptionMessages.RaceDoesNotExistErrorMessage, raceName));
+            }
+            if (pilot == null || pilot.CanRace == false || race.Pilots.Contains(pilot)) //Contains??
+            {
+                throw new InvalidOperationException(String.Format(ExceptionMessages.PilotDoesNotExistErrorMessage, pilotFullName));
+            }
+            race.Pilots.Add(pilot);
+            return String.Format(OutputMessages.SuccessfullyAddPilotToRace, pilotFullName, raceName);
         }
 
 
