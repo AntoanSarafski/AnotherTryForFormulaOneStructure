@@ -10,21 +10,26 @@ namespace Formula1.Repositories
 {
     public class RaceRepository : IRepository<IRace>
     {
-        public IReadOnlyCollection<IRace> Models => throw new NotImplementedException();
+        public RaceRepository()
+        {
+            models = new List<IRace>();
+        }
+        private List<IRace> models;
+        public IReadOnlyCollection<IRace> Models => this.models.AsReadOnly();
 
         public void Add(IRace model)
         {
-            throw new NotImplementedException();
+            models.Add(model);
         }
 
         public IRace FindByName(string name)
         {
-            throw new NotImplementedException();
+            return models.FirstOrDefault(c => c.RaceName == name);
         }
 
         public bool Remove(IRace model)
         {
-            throw new NotImplementedException();
+            return models.Remove(model);
         }
     }
 }

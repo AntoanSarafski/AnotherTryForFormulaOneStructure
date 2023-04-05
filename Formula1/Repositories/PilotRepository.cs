@@ -10,21 +10,26 @@ namespace Formula1.Repositories
 {
     public class PilotRepository : IRepository<IPilot>
     {
-        public IReadOnlyCollection<IPilot> Models => throw new NotImplementedException();
+        public PilotRepository()
+        {
+            models = new List<IPilot>();
+        }
+        private List<IPilot> models;
+        public IReadOnlyCollection<IPilot> Models => this.models.AsReadOnly();
 
         public void Add(IPilot model)
         {
-            throw new NotImplementedException();
+            models.Add(model);
         }
 
         public IPilot FindByName(string name)
         {
-            throw new NotImplementedException();
+            return models.FirstOrDefault(c => c.FullName                                                                                                    == name);
         }
 
         public bool Remove(IPilot model)
         {
-            throw new NotImplementedException();
+            return models.Remove(model);
         }
     }
 }

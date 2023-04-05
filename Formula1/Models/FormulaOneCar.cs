@@ -14,7 +14,7 @@ namespace Formula1.Models
         private int horsepower;
         private double engineDisplacement;
 
-        public FormulaOneCar(string model, int horsepower, double engineDisplacement)
+        protected FormulaOneCar(string model, int horsepower, double engineDisplacement)
         {
             Model = model;
             Horsepower = horsepower;

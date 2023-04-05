@@ -3,6 +3,7 @@ using Formula1.Repositories.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,21 +11,27 @@ namespace Formula1.Repositories
 {
     public class FormulaOneCarRepository : IRepository<IFormulaOneCar>
     {
-        public IReadOnlyCollection<IFormulaOneCar> Models => throw new NotImplementedException();
+        private List<IFormulaOneCar> models;
+
+        public FormulaOneCarRepository()
+        {
+            models = new List<IFormulaOneCar>();
+        }
+        public IReadOnlyCollection<IFormulaOneCar> Models => this.models.AsReadOnly();
 
         public void Add(IFormulaOneCar model)
         {
-            throw new NotImplementedException();
+            models.Add(model);
         }
 
         public IFormulaOneCar FindByName(string name)
         {
-            throw new NotImplementedException();
+            return models.FirstOrDefault(c => c.Model == name);
         }
 
         public bool Remove(IFormulaOneCar model)
         {
-            throw new NotImplementedException();
+            return models.Remove(model);
         }
     }
 }
