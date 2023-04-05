@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 using Formula1.Core.Contracts;
 using Formula1.Models;
 using Formula1.Models.Contracts;
@@ -18,7 +19,12 @@ namespace Formula1.Core
         private RaceRepository raceRepository;
         private FormulaOneCarRepository carRepository;
 
-
+        public Controller()
+        {
+            carRepository = new FormulaOneCarRepository();
+            pilotRepository = new PilotRepository();
+            raceRepository = new RaceRepository();
+        }
         public string CreatePilot(string fullName)
         {
             if (pilotRepository.FindByName(fullName) != null)
@@ -108,20 +114,70 @@ namespace Formula1.Core
             return String.Format(OutputMessages.SuccessfullyAddPilotToRace, pilotFullName, raceName);
         }
 
-
-        public string PilotReport()
+        public string StartRace(string raceName)
         {
-            throw new NotImplementedException();
+            IRace race = raceRepository.FindByName(raceName);
+
+            if (race == null)
+            {
+                throw new NullReferenceException(String.Format(ExceptionMessages.RaceDoesNotExistErrorMessage, raceName));
+            }
+            if (race.Pilots.Count < 3)
+            {
+                throw new InvalidOperationException(String.Format(ExceptionMessages.InvalidRaceParticipants, raceName));
+            }
+            if (race.TookPlace == true)
+            {
+                throw new InvalidOperationException(String.Format(ExceptionMessages.RaceTookPlaceErrorMessage, raceName));
+            }
+
+
+            List<IPilot> orderedPilots = race.Pilots.OrderByDescending(p => p.Car.RaceScoreCalculator(race.NumberOfLaps)).ToList();
+
+            race.TookPlace = true;
+            IPilot winner = orderedPilots.First();
+            winner.WinRace();
+            orderedPilots.Remove(winner);
+            IPilot secondPlacedPilot = orderedPilots.First();
+            orderedPilots.Remove(secondPlacedPilot);
+            IPilot thirdPlacedPilot = orderedPilots.First();
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"Pilot {winner.FullName} wins the {raceName} race.");
+            sb.AppendLine($"Pilot {secondPlacedPilot.FullName} is second in the {raceName} race.");
+            sb.AppendLine($"Pilot {thirdPlacedPilot.FullName} is third in the {raceName} race.");
+
+            return sb.ToString().Trim();
         }
 
         public string RaceReport()
         {
-            throw new NotImplementedException();
+            List<IRace> executedRaces = raceRepository.Models.Where(r => r.TookPlace).ToList(); 
+            StringBuilder sb = new StringBuilder();
+
+            foreach (IRace race in executedRaces)
+            {
+                sb.Append(race.RaceInfo());
+                sb.AppendLine();
+            }
+            return sb.ToString().Trim();
         }
 
-        public string StartRace(string raceName)
+        public string PilotReport()
         {
-            throw new NotImplementedException();
+            List<IPilot> orderedPilots = pilotRepository.Models.OrderBy(p => p.NumberOfWins).ToList();
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach(IPilot pilot in orderedPilots)
+            {
+                sb.AppendLine(pilot.ToString());
+            }
+            return sb.ToString().Trim();
         }
+
+        
+
+       
     }
 }
